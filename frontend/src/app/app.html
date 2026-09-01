@@ -1,0 +1,113 @@
+<main>
+  <section class="hero">
+    <nav class="nav shell"><div class="brand"><span
+          class="brand-mark">JL</span><span>Chá Rifa</span></div><a
+        href="#como-funciona">Como funciona</a></nav>
+    <div class="hero-content shell"><div class="eyebrow">✦ Uma celebração muito
+        especial</div><h1>Chá Rifa do<br><em>José Lucca</em></h1><p>Escolha seus
+        números, ajude a preparar a chegada do José Lucca e concorra a prêmios
+        incríveis.</p><a class="primary-button" href="#numeros">Escolher meus
+        números <span>↓</span></a></div>
+    <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div><div
+      class="plane" aria-hidden="true">✈</div>
+  </section>
+  @if (raffle(); as data) {
+  <section class="prizes shell">
+    <div><span class="icon">🏆</span><p>1º lugar<strong>{{
+          money(data.firstPrize) }}</strong></p></div><div
+      class="divider"></div>
+    <div><span class="icon">🏆</span><p>2º lugar<strong>{{
+          money(data.secondPrize) }}</strong></p></div><div
+      class="divider"></div>
+    <div><span class="icon">📅</span><p>Sorteio online<strong>{{ data.drawAt |
+          date:'dd/MM HH:mm':'-0300' }}</strong></p></div>
+  </section>
+  }
+  <section class="numbers-section" id="numeros"><div class="shell narrow">
+      <span class="section-kicker">FAÇA SUA ESCOLHA</span><h2>Escolha seus
+        números da sorte</h2>
+      <p class="section-copy">Cada número vale um pacote de fraldas ou Pix de {{
+        money(raffle()?.numberPrice) }}. Você pode escolher quantos quiser.</p>
+      <div class="legend"><span><i class="available"></i>
+          Disponível</span><span><i class="chosen"></i>
+          Selecionado</span><span><i class="busy"></i> Reservado</span></div>
+      <div class="number-grid" [attr.aria-busy]="loading()">
+        @if (loading()) { <p class="loading">Carregando números...</p> }
+        @for (item of numbers(); track item.number) {
+        <button type="button" [disabled]="item.status !== 'available'"
+          [class]="item.status + (selected().includes(item.number) ? ' selected' : '')"
+          (click)="toggleNumber(item)"
+          [attr.aria-label]="'Número ' + item.number + ': ' + (selected().includes(item.number) ? 'selecionado' : item.status)">{{
+          item.number.toString().padStart(2, '0') }}</button>
+        }
+      </div>
+      @if (error() && step() === 'numbers') { <p class="page-error">{{ error()
+        }}</p> }
+    </div></section>
+  @if (selected().length > 0 && step() === 'numbers') {
+  <div class="selection-bar"><div><span>{{ selected().length }} número(s)
+        selecionado(s)</span><strong>{{ money(total()) }}</strong></div><button
+      (click)="step.set('form')">Continuar <span>→</span></button></div>
+  }
+  @if (step() === 'form') {
+  <div class="modal-backdrop"><section class="modal" role="dialog"
+      aria-modal="true" aria-labelledby="form-title">
+      <button class="close" (click)="step.set('numbers')"
+        aria-label="Fechar">×</button><span class="section-kicker">QUASE
+        LÁ</span><h2 id="form-title">Complete sua reserva</h2>
+      <p class="modal-summary">Números <strong>{{ selected().join(', ')
+          }}</strong> · Total <strong>{{ money(total()) }}</strong></p>
+      <form #reservationForm="ngForm" (ngSubmit)="reserve()">
+        <label>Seu nome<input required minlength="3" maxlength="80" name="name"
+            [(ngModel)]="form.name" placeholder="Nome completo"></label>
+        <label>WhatsApp<input required minlength="10" maxlength="20"
+            name="phone" [(ngModel)]="form.phone" placeholder="(00) 00000-0000"
+            inputmode="tel"></label>
+        <fieldset><legend>Como deseja participar?</legend>
+          <label class="payment"
+            [class.active]="form.paymentMethod === 'PIX'"><input type="radio"
+              name="payment" value="PIX"
+              [(ngModel)]="form.paymentMethod"><span><strong>Pix</strong><small>Pagamento
+                por número</small></span></label>
+          <label class="payment"
+            [class.active]="form.paymentMethod === 'DIAPER'"><input type="radio"
+              name="payment" value="DIAPER"
+              [(ngModel)]="form.paymentMethod"><span><strong>Fralda</strong><small>Um
+                pacote por número</small></span></label>
+          <label class="payment"
+            [class.active]="form.paymentMethod === 'CARD'"><input type="radio"
+              name="payment" value="CARD"
+              [(ngModel)]="form.paymentMethod"><span><strong>Cartão</strong><small>Combinar
+                pelo WhatsApp</small></span></label>
+        </fieldset>
+        @if (error()) { <p class="error">{{ error() }}</p> }
+        <button class="submit"
+          [disabled]="reservationForm.invalid || submitting()">{{ submitting() ?
+          'Reservando...' : 'Reservar números' }}</button><small
+          class="privacy">Seus números ficarão reservados por 15
+          minutos.</small>
+      </form>
+    </section></div>
+  }
+  @if (step() === 'success' && reservation(); as result) {
+  <div class="modal-backdrop"><section class="modal success-modal" role="dialog"
+      aria-modal="true"><div class="success-icon">✓</div><span
+        class="section-kicker">RESERVA REALIZADA</span><h2>Seus números estão
+        guardados!</h2><p>Agora fale conosco no WhatsApp para enviar o
+        comprovante ou combinar a entrega.</p><button class="whatsapp"
+        (click)="openWhatsApp()">Continuar no WhatsApp
+        <span>→</span></button><small>Reserva {{ result.id.slice(0, 8)
+        }}</small></section></div>
+  }
+  <section class="how" id="como-funciona"><div class="shell narrow"><span
+        class="section-kicker">SIMPLES E RÁPIDO</span><h2>Como
+        funciona?</h2><div
+        class="steps"><article><b>1</b><h3>Escolha</h3><p>Selecione um ou mais
+            números
+            disponíveis.</p></article><article><b>2</b><h3>Reserve</h3><p>Informe
+            seus dados e a forma de
+            participação.</p></article><article><b>3</b><h3>Confirme</h3><p>Finalize
+            pelo WhatsApp e boa sorte!</p></article></div></div></section>
+  <footer><div class="shell"><span>Feito com carinho para o José Lucca
+        ♡</span><small>Chá Rifa · 2026</small></div></footer>
+</main>

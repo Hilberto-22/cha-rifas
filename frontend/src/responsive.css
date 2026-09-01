@@ -1,0 +1,33 @@
+@media(max-width:900px) and (min-width:701px){
+  .number-grid{grid-template-columns:repeat(8,1fr)}
+  .prizes{padding-inline:25px}
+  .plane{right:2%;opacity:.65}
+}
+@media(max-width:700px){
+  .shell{width:min(100% - 28px,1140px)}
+  .hero{min-height:580px}
+  .nav{height:74px}
+  .hero-content{padding-top:72px}
+  .hero h1{font-size:clamp(43px,14vw,56px);overflow-wrap:anywhere}
+  .hero-content>p{font-size:15px;line-height:1.6}
+  .plane{opacity:.38}
+  .prizes{display:grid;grid-template-columns:1fr;width:calc(100% - 28px);padding:20px;margin-bottom:0;transform:translateY(-18px)}
+  .prizes>div:not(.divider){justify-content:center;text-align:center}
+  .prizes .divider{display:none}
+  .prizes strong{font-size:18px}
+  .numbers-section{padding:42px 0 75px}
+  .number-grid button{min-width:0;font-size:14px}
+  .selection-bar{padding:10px 10px 10px 15px;gap:10px}
+  .selection-bar button{padding:12px 14px}
+  .modal-backdrop{padding:10px}
+  .modal{max-height:calc(100dvh - 20px);padding:32px 18px}
+  .modal h2{font-size:30px}
+}
+@media(max-width:360px){
+  .number-grid{gap:6px}
+  .number-grid button{font-size:12px}
+  .selection-bar span{font-size:10px}
+  .selection-bar strong{font-size:16px}
+  .selection-bar button{font-size:12px}
+  .primary-button{gap:12px;padding:14px 16px}
+}

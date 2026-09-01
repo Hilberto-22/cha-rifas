@@ -1,0 +1,45 @@
+spring:
+  config:
+    import: optional:file:../.env[.properties],optional:file:.env[.properties]
+  application:
+    name: cha-rifa-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/rifa}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  jackson:
+    time-zone: UTC
+
+server:
+  port: ${SERVER_PORT:8081}
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  whatsapp-number: ${WHATSAPP_NUMBER:5599999999999}
+  reservation-minutes: ${RESERVATION_MINUTES:20}
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:troque-esta-senha}
+  jwt:
+    secret: ${JWT_SECRET:desenvolvimento-local-troque-esta-chave-123456}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:480}

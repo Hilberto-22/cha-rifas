@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:rifa;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+app:
+  whatsapp-number: 5596999999999
+  reservation-minutes: 15
+  admin:
+    username: admin
+    password: senha-de-teste
+  jwt:
+    secret: chave-jwt-de-teste-com-mais-de-32-caracteres
+    expiration-minutes: 60
