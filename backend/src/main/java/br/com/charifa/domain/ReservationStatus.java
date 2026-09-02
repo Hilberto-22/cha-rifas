@@ -1,3 +1,3 @@
 package br.com.charifa.domain;
 
-public enum ReservationStatus { PENDING, CONFIRMED, CANCELLED, EXPIRED }
+public enum ReservationStatus { PENDING, PAYMENT_REPORTED, CONFIRMED, CANCELLED, EXPIRED }

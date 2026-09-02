@@ -17,11 +17,15 @@
   .prizes strong{font-size:18px}
   .numbers-section{padding:42px 0 75px}
   .number-grid button{min-width:0;font-size:14px}
-  .selection-bar{padding:10px 10px 10px 15px;gap:10px}
+  .selection-bar{bottom:max(10px,env(safe-area-inset-bottom));padding:10px 10px 10px 15px;gap:10px}
   .selection-bar button{padding:12px 14px}
   .modal-backdrop{padding:10px}
   .modal{max-height:calc(100dvh - 20px);padding:32px 18px}
   .modal h2{font-size:30px}
+}
+@media(hover:none){
+  .number-grid button:hover:not(:disabled){transform:none;box-shadow:none}
+  .number-grid button.selected{transform:none}
 }
 @media(max-width:360px){
   .number-grid{gap:6px}

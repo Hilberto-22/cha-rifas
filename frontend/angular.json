@@ -19,6 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
+            "allowedCommonJsDependencies": ["qrcode"],
             "assets": [
               {
                 "glob": "**/*",
@@ -27,7 +28,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/responsive.css"
+              "src/responsive.css",
+              "src/pix.css"
             ]
           },
           "configurations": {

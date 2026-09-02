@@ -26,4 +26,10 @@ public class RaffleController {
     public ReservationResponse reserve(@PathVariable UUID raffleId, @Valid @RequestBody ReservationRequest request) {
         return service.reserve(raffleId, request);
     }
+
+    @PatchMapping("/{raffleId}/reservations/{reservationId}/payment-reported")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reportPayment(@PathVariable UUID raffleId, @PathVariable UUID reservationId) {
+        service.reportPayment(raffleId, reservationId);
+    }
 }

@@ -144,21 +144,40 @@ interface LoginResponse {
     `
       @media (max-width: 520px) {
         .login-page {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
           padding: 16px;
-          align-items: center;
         }
         .back {
-          top: 16px;
-          left: 16px;
+          position: static;
+          width: min(430px, 100%);
+          margin: 0 auto 12px;
         }
         .login-card {
-          padding: 32px 20px;
+          width: min(430px, 100%);
+          padding: 26px 20px;
         }
         .login-card h1 {
           font-size: 32px;
         }
         .admin-mark {
-          margin-top: 18px;
+          width: 46px;
+          height: 46px;
+          margin-bottom: 16px;
+        }
+        .login-card form {
+          gap: 14px;
+          margin-top: 20px;
+        }
+        .login-card input,
+        .login-card button {
+          min-height: 46px;
+        }
+      }
+      @media (max-width: 520px) and (max-height: 620px) {
+        .login-page {
+          justify-content: flex-start;
         }
       }
     `,

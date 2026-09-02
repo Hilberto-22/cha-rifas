@@ -19,6 +19,7 @@ public class Reservation {
     @Column(nullable = false) private ReservationStatus status;
     @Column(name = "expires_at", nullable = false) private Instant expiresAt;
     @Column(name = "created_at", nullable = false) private Instant createdAt;
+    @Column(name = "payment_reported_at") private Instant paymentReportedAt;
 
     protected Reservation() {}
 
@@ -41,6 +42,14 @@ public class Reservation {
     public Instant getExpiresAt() { return expiresAt; }
     public ReservationStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
+    public Instant getPaymentReportedAt() { return paymentReportedAt; }
+    public void reportPayment(Instant now) {
+        if (status != ReservationStatus.PENDING || !expiresAt.isAfter(now)) {
+            throw new IllegalArgumentException("Somente uma reserva pendente e válida pode informar pagamento.");
+        }
+        this.status = ReservationStatus.PAYMENT_REPORTED;
+        this.paymentReportedAt = now;
+    }
     public void expire() { this.status = ReservationStatus.EXPIRED; }
     public void confirm() { this.status = ReservationStatus.CONFIRMED; }
     public void cancel() { this.status = ReservationStatus.CANCELLED; }

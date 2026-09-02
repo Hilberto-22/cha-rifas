@@ -93,8 +93,33 @@
   <div class="modal-backdrop"><section class="modal success-modal" role="dialog"
       aria-modal="true"><div class="success-icon">✓</div><span
         class="section-kicker">RESERVA REALIZADA</span><h2>Seus números estão
-        guardados!</h2><p>Agora fale conosco no WhatsApp para enviar o
-        comprovante ou combinar a entrega.</p><button class="whatsapp"
+        guardados!</h2>
+      @if (result.pixCopyPaste) {
+        <p>Faça o Pix de <strong>{{ money(total()) }}</strong> usando o QR Code ou o código abaixo.</p>
+        <div class="pix-box">
+          @if (qrCodeDataUrl()) {
+            <img [src]="qrCodeDataUrl()" alt="QR Code Pix" width="280" height="280">
+          }
+          <label for="pix-code">Pix Copia e Cola</label>
+          <div class="pix-copy-row">
+            <input id="pix-code" readonly [value]="result.pixCopyPaste">
+            <button type="button" (click)="copyPix()">{{ copied() ? 'Copiado!' : 'Copiar' }}</button>
+          </div>
+        </div>
+        @if (!paymentReported()) {
+          <button class="payment-reported" type="button" (click)="reportPayment()"
+            [disabled]="reportingPayment()">
+            {{ reportingPayment() ? 'Enviando...' : 'Já fiz o pagamento' }}
+          </button>
+          <small class="payment-warning">Use este botão somente após concluir o Pix. O pagamento ainda será conferido pelo administrador.</small>
+        } @else {
+          <div class="reported-message">Pagamento informado! Seus números aguardam nossa conferência.</div>
+        }
+        @if (error()) { <p class="error">{{ error() }}</p> }
+      } @else {
+        <p>Agora fale conosco no WhatsApp para combinar o pagamento ou a entrega.</p>
+      }
+      <button class="whatsapp"
         (click)="openWhatsApp()">Continuar no WhatsApp
         <span>→</span></button><small>Reserva {{ result.id.slice(0, 8)
         }}</small></section></div>

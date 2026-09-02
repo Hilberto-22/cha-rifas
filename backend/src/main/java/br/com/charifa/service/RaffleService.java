@@ -29,16 +29,19 @@ public class RaffleService {
     private final ReservationRepository reservationRepository;
     private final Duration reservationDuration;
     private final String whatsappNumber;
+    private final PixPayloadService pixPayloadService;
 
     public RaffleService(RaffleRepository raffleRepository, RaffleNumberRepository numberRepository,
                          ReservationRepository reservationRepository,
                          @Value("${app.reservation-minutes}") long reservationMinutes,
-                         @Value("${app.whatsapp-number}") String whatsappNumber) {
+                         @Value("${app.whatsapp-number}") String whatsappNumber,
+                         PixPayloadService pixPayloadService) {
         this.raffleRepository = raffleRepository;
         this.numberRepository = numberRepository;
         this.reservationRepository = reservationRepository;
         this.reservationDuration = Duration.ofMinutes(reservationMinutes);
         this.whatsappNumber = whatsappNumber;
+        this.pixPayloadService = pixPayloadService;
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +112,23 @@ public class RaffleService {
 
         numberRepository.saveAll(numerosBloqueados);
 
-        return ReservationResponse.from(reservation, numerosSolicitados);
+        String pixCopyPaste = request.paymentMethod() == br.com.charifa.domain.PaymentMethod.PIX
+                ? pixPayloadService.create(reservation.getId(), raffle.getNumberPrice()
+                        .multiply(java.math.BigDecimal.valueOf(numerosSolicitados.size())))
+                : null;
+        return ReservationResponse.from(reservation, numerosSolicitados, pixCopyPaste);
+    }
+
+    @Transactional
+    public void reportPayment(UUID raffleId, UUID reservationId) {
+        Reservation reservation = reservationRepository.findByIdForUpdate(reservationId)
+                .filter(item -> item.getRaffle().getId().equals(raffleId))
+                .orElseThrow(() -> new IllegalArgumentException("Reserva não encontrada."));
+        if (reservation.getPaymentMethod() != br.com.charifa.domain.PaymentMethod.PIX) {
+            throw new IllegalArgumentException("A informação de pagamento está disponível apenas para Pix.");
+        }
+        if (reservation.getStatus() == br.com.charifa.domain.ReservationStatus.PAYMENT_REPORTED) return;
+        reservation.reportPayment(Instant.now());
     }
 
     @Scheduled(fixedDelay = 60_000)

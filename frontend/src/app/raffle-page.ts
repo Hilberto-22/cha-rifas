@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import * as QRCode from 'qrcode';
 type NumberStatus = 'available' | 'reserved' | 'confirmed';
 type PaymentMethod = 'PIX' | 'DIAPER' | 'CARD';
 interface RaffleNumber {
@@ -22,6 +23,7 @@ interface Reservation {
   id: string;
   numbers: number[];
   expiresAt: string;
+  pixCopyPaste: string | null;
 }
 @Component({
   selector: 'app-raffle-page',
@@ -39,6 +41,10 @@ export class RafflePage implements OnInit, OnDestroy {
   submitting = signal(false);
   error = signal('');
   reservation = signal<Reservation | null>(null);
+  qrCodeDataUrl = signal('');
+  copied = signal(false);
+  reportingPayment = signal(false);
+  paymentReported = signal(false);
   form = { name: '', phone: '', paymentMethod: 'PIX' as PaymentMethod };
   total = computed(() => this.selected().length * (this.raffle()?.numberPrice ?? 0));
   ngOnInit(): void {
@@ -98,6 +104,7 @@ export class RafflePage implements OnInit, OnDestroy {
           this.reservation.set(reservation);
           this.step.set('success');
           this.submitting.set(false);
+          if (reservation.pixCopyPaste) void this.createQrCode(reservation.pixCopyPaste);
           this.loadNumbers();
         },
         error: (response: HttpErrorResponse) => {
@@ -112,6 +119,40 @@ export class RafflePage implements OnInit, OnDestroy {
           this.submitting.set(false);
         },
       });
+  }
+  async copyPix(): Promise<void> {
+    const code = this.reservation()?.pixCopyPaste;
+    if (!code) return;
+    await navigator.clipboard.writeText(code);
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
+  }
+  reportPayment(): void {
+    const raffle = this.raffle();
+    const reservation = this.reservation();
+    if (!raffle || !reservation || this.reportingPayment() || this.paymentReported()) return;
+    this.reportingPayment.set(true);
+    this.error.set('');
+    this.http
+      .patch<void>(
+        `/api/v1/raffles/${raffle.id}/reservations/${reservation.id}/payment-reported`,
+        {},
+      )
+      .subscribe({
+        next: () => {
+          this.paymentReported.set(true);
+          this.reportingPayment.set(false);
+        },
+        error: (response: HttpErrorResponse) => {
+          this.error.set(response.error?.message ?? 'Não foi possível informar o pagamento.');
+          this.reportingPayment.set(false);
+        },
+      });
+  }
+  private async createQrCode(payload: string): Promise<void> {
+    this.qrCodeDataUrl.set(
+      await QRCode.toDataURL(payload, { width: 280, margin: 2, errorCorrectionLevel: 'M' }),
+    );
   }
   openWhatsApp(): void {
     const raffle = this.raffle();

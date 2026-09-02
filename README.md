@@ -174,6 +174,9 @@ Não execute `docker compose down -v` em produção: a opção `-v` remove o vol
 | `POSTGRES_USER` | Usuário do banco | `rifa` |
 | `POSTGRES_PASSWORD` | Senha obrigatória | sem padrão |
 | `WHATSAPP_NUMBER` | WhatsApp com país e DDD | obrigatório |
+| `PIX_KEY` | Chave usada no QR Code e Pix Copia e Cola | obrigatório para Pix |
+| `PIX_RECEIVER_NAME` | Nome do recebedor, com até 25 caracteres no BR Code | obrigatório para Pix |
+| `PIX_RECEIVER_CITY` | Cidade do recebedor, com até 15 caracteres no BR Code | obrigatório para Pix |
 | `RESERVATION_MINUTES` | Tempo de reserva | `15` |
 | `APP_PORT` | Porta local usada pelo Nginx do host | `8082` |
 | `ADMIN_USERNAME` | Usuário do painel administrativo | `admin` |
@@ -189,6 +192,7 @@ Dados da rifa inicial, como prêmios, data e preço, ficam na migration `backend
 GET  /api/v1/raffles/active
 GET  /api/v1/raffles/{raffleId}/numbers
 POST /api/v1/raffles/{raffleId}/reservations
+PATCH /api/v1/raffles/{raffleId}/reservations/{reservationId}/payment-reported
 GET  /actuator/health
 ```
 
@@ -197,6 +201,8 @@ GET  /actuator/health
 Acesse `http://localhost:4200/admin/login`. O primeiro administrador é criado automaticamente a partir de `ADMIN_USERNAME` e `ADMIN_PASSWORD`. Se a senha do `.env` mudar, o hash BCrypt armazenado no banco será atualizado na próxima inicialização do backend.
 
 O painel apresenta participantes, telefones, números, forma de pagamento, situação, valor, criação e vencimento. Reservas pendentes podem ser confirmadas ou canceladas. A confirmação fixa os números como vendidos; o cancelamento libera os números novamente.
+
+Nas reservas Pix, a aplicação gera um payload BR Code com valor e identificador da reserva, apresenta Pix Copia e Cola e QR Code e permite ao participante informar que realizou o pagamento. Isso altera a situação para `PAYMENT_REPORTED` (Pagamento informado) e mantém os números reservados até a conferência administrativa. Essa declaração não confirma automaticamente o recebimento: o administrador ainda deve verificar o extrato e confirmar ou cancelar a reserva.
 
 O login devolve um JWT assinado por `JWT_SECRET`. O Angular mantém esse token no `sessionStorage`, adiciona o cabeçalho `Authorization: Bearer` às chamadas administrativas e remove a sessão ao receber HTTP 401. O backend exige o papel `ADMIN` independentemente da proteção de rota do frontend.
 

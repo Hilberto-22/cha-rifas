@@ -1,0 +1,18 @@
+.pix-box {
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid #d8dedf;
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+}
+.pix-box img { display: block; width: min(280px, 100%); height: auto; margin: 0 auto 14px; }
+.pix-box label { display: block; margin-bottom: 7px; color: #526976; font-size: 11px; font-weight: 700; }
+.pix-copy-row { display: flex; gap: 8px; }
+.pix-copy-row input { min-width: 0; flex: 1; padding: 11px; border: 1px solid #d2d9da; border-radius: 6px; color: #657780; background: #f7f9f8; text-overflow: ellipsis; }
+.pix-copy-row button, .payment-reported { border: 0; border-radius: 6px; padding: 11px 16px; background: #315f77; color: #fff; font-weight: 700; cursor: pointer; }
+.payment-reported { width: 100%; padding: 15px; background: #3d8261; }
+.payment-reported:disabled { opacity: .65; }
+.payment-warning { display: block; margin: 9px 0 15px; color: #87959c; line-height: 1.45; }
+.reported-message { margin: 12px 0; padding: 13px; border-radius: 7px; background: #dceee5; color: #347254; font-weight: 700; }
+@media (max-width: 420px) { .pix-copy-row { flex-direction: column; } .pix-copy-row button { width: 100%; } }

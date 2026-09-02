@@ -37,6 +37,10 @@ management:
 app:
   whatsapp-number: ${WHATSAPP_NUMBER:5599999999999}
   reservation-minutes: ${RESERVATION_MINUTES:20}
+  pix:
+    key: ${PIX_KEY:}
+    receiver-name: ${PIX_RECEIVER_NAME:}
+    receiver-city: ${PIX_RECEIVER_CITY:}
   admin:
     username: ${ADMIN_USERNAME:admin}
     password: ${ADMIN_PASSWORD:troque-esta-senha}

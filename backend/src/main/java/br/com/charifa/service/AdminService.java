@@ -33,7 +33,9 @@ public class AdminService {
     public void confirm(UUID reservationId) {
         var reservation = reservations.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva não encontrada."));
-        if (reservation.getStatus() != ReservationStatus.PENDING || !reservation.getExpiresAt().isAfter(Instant.now())) {
+        boolean validPending = reservation.getStatus() == ReservationStatus.PENDING
+                && reservation.getExpiresAt().isAfter(Instant.now());
+        if (!validPending && reservation.getStatus() != ReservationStatus.PAYMENT_REPORTED) {
             throw new IllegalArgumentException("Somente uma reserva pendente e válida pode ser confirmada.");
         }
         var reservedNumbers = numbers.findByReservationIdForUpdate(reservationId);

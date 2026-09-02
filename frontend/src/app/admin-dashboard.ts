@@ -13,6 +13,7 @@ interface AdminReservation {
   total: number;
   createdAt: string;
   expiresAt: string;
+  paymentReportedAt: string | null;
 }
 @Component({
   selector: 'app-admin-dashboard',
@@ -34,6 +35,9 @@ interface AdminReservation {
       </article>
       <article>
         <span>Pendentes</span><strong>{{ pendingCount() }}</strong>
+      </article>
+      <article>
+        <span>Pagamento informado</span><strong>{{ reportedCount() }}</strong>
       </article>
       <article>
         <span>Números reservados</span><strong>{{ reservedNumbers() }}</strong>
@@ -89,6 +93,9 @@ interface AdminReservation {
                     <span class="status" [class]="'status ' + item.status.toLowerCase()">{{
                       statusLabel(item.status)
                     }}</span>
+                    @if (item.paymentReportedAt) {
+                      <small>{{ item.paymentReportedAt | date: 'dd/MM/yy HH:mm' : '-0300' }}</small>
+                    }
                   </td>
                   <td>
                     <strong>{{ money(item.total) }}</strong>
@@ -97,7 +104,7 @@ interface AdminReservation {
                   <td>{{ item.expiresAt | date: 'dd/MM/yy HH:mm' : '-0300' }}</td>
                   <td>
                     <div class="row-actions">
-                      @if (item.status === 'PENDING') {
+                      @if (item.status === 'PENDING' || item.status === 'PAYMENT_REPORTED') {
                         <button class="confirm" (click)="changeStatus(item.id, 'confirm')">
                           Confirmar</button
                         ><button (click)="changeStatus(item.id, 'cancel')">Cancelar</button>
@@ -159,7 +166,7 @@ interface AdminReservation {
       }
       .metrics {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 14px;
         margin-bottom: 24px;
       }
@@ -271,6 +278,10 @@ interface AdminReservation {
         background: #dceee5;
         color: #347254;
       }
+      .status.payment_reported {
+        background: #dce8f4;
+        color: #315f77;
+      }
       .status.expired,
       .status.cancelled {
         background: #f1dddd;
@@ -318,6 +329,7 @@ interface AdminReservation {
         }
         .actions button {
           flex: 1;
+          min-height: 44px;
         }
         .metrics {
           gap: 8px;
@@ -401,6 +413,10 @@ interface AdminReservation {
         .row-actions {
           max-width: none;
         }
+        .row-actions button {
+          min-height: 40px;
+          flex: 1 1 90px;
+        }
         .empty {
           padding: 35px 15px;
         }
@@ -423,14 +439,20 @@ export class AdminDashboard implements OnInit {
   reservations = signal<AdminReservation[]>([]);
   loading = signal(true);
   pendingCount = computed(() => this.reservations().filter((r) => r.status === 'PENDING').length);
+  reportedCount = computed(
+    () => this.reservations().filter((r) => r.status === 'PAYMENT_REPORTED').length,
+  );
   reservedNumbers = computed(() =>
     this.reservations()
-      .filter((r) => r.status === 'PENDING' || r.status === 'CONFIRMED')
+      .filter(
+        (r) =>
+          r.status === 'PENDING' || r.status === 'PAYMENT_REPORTED' || r.status === 'CONFIRMED',
+      )
       .reduce((sum, r) => sum + r.numbers.length, 0),
   );
   pendingTotal = computed(() =>
     this.reservations()
-      .filter((r) => r.status === 'PENDING')
+      .filter((r) => r.status === 'PENDING' || r.status === 'PAYMENT_REPORTED')
       .reduce((sum, r) => sum + r.total, 0),
   );
   ngOnInit(): void {
@@ -463,9 +485,13 @@ export class AdminDashboard implements OnInit {
   }
   statusLabel(value: string): string {
     return (
-      { PENDING: 'Pendente', CONFIRMED: 'Confirmada', EXPIRED: 'Expirada', CANCELLED: 'Cancelada' }[
-        value
-      ] ?? value
+      {
+        PENDING: 'Pendente',
+        PAYMENT_REPORTED: 'Pagamento informado',
+        CONFIRMED: 'Confirmada',
+        EXPIRED: 'Expirada',
+        CANCELLED: 'Cancelada',
+      }[value] ?? value
     );
   }
 }

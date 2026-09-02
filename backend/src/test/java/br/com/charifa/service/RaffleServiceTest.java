@@ -39,7 +39,8 @@ class RaffleServiceTest {
         set(unavailable, "number", 12); set(unavailable, "status", RaffleNumberStatus.CONFIRMED);
         when(raffles.findById(raffle.getId())).thenReturn(Optional.of(raffle));
         when(numbers.findAllForUpdate(raffle.getId(), List.of(12))).thenReturn(List.of(unavailable));
-        RaffleService service = new RaffleService(raffles, numbers, reservations, 15, "5599999999999");
+        RaffleService service = new RaffleService(raffles, numbers, reservations, 15, "5599999999999",
+                mock(PixPayloadService.class));
 
         var exception = assertThrows(NumberUnavailableException.class, () -> service.reserve(raffle.getId(),
                 new ReservationRequest("Pessoa Teste", "00000000000", PaymentMethod.PIX, List.of(12))));
