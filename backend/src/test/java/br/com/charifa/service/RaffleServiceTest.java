@@ -1,14 +1,31 @@
 package br.com.charifa.service;
 
-import br.com.charifa.api.ReservationRequest;
-import br.com.charifa.domain.*;
-import br.com.charifa.repository.*;
-import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.time.Instant;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import br.com.charifa.api.ReservationRequest;
+import br.com.charifa.domain.PaymentMethod;
+import br.com.charifa.domain.Raffle;
+import br.com.charifa.domain.RaffleNumber;
+import br.com.charifa.domain.RaffleNumberStatus;
+import br.com.charifa.domain.Reservation;
+import br.com.charifa.domain.ReservationStatus;
+import br.com.charifa.repository.RaffleNumberRepository;
+import br.com.charifa.repository.RaffleRepository;
+import br.com.charifa.repository.ReservationRepository;
 
 class RaffleServiceTest {
     @Test
@@ -24,8 +41,9 @@ class RaffleServiceTest {
         when(numbers.findAllForUpdate(raffle.getId(), List.of(12))).thenReturn(List.of(unavailable));
         RaffleService service = new RaffleService(raffles, numbers, reservations, 15, "5599999999999");
 
-        assertThrows(NumberUnavailableException.class, () -> service.reserve(raffle.getId(),
+        var exception = assertThrows(NumberUnavailableException.class, () -> service.reserve(raffle.getId(),
                 new ReservationRequest("Pessoa Teste", "00000000000", PaymentMethod.PIX, List.of(12))));
+        assertNotNull(exception);
         verify(reservations, never()).save(any());
     }
 

@@ -3,4 +3,4 @@ values ('9d325c50-d845-4bf3-85e7-1bf14e9ed928', 'Chá Rifa do José Lucca', '202
 
 insert into raffle_numbers (id, raffle_id, number, status)
 select gen_random_uuid(), '9d325c50-d845-4bf3-85e7-1bf14e9ed928', value, 'AVAILABLE'
-from generate_series(1, 100) as value;
+from generate_series(1, 150) as value;

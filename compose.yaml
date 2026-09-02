@@ -1,13 +1,14 @@
 name: cha-rifa
 
 services:
-  database:
+  db:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-rifa}
-      POSTGRES_USER: ${POSTGRES_USER:-rifa}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: America/Sao_Paulo
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,17 +23,17 @@ services:
     build: ./backend
     restart: unless-stopped
     environment:
-      DB_URL: jdbc:postgresql://database:5432/${POSTGRES_DB:-rifa}
-      DB_USER: ${POSTGRES_USER:-rifa}
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       WHATSAPP_NUMBER: ${WHATSAPP_NUMBER}
       RESERVATION_MINUTES: ${RESERVATION_MINUTES:-15}
-      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Defina ADMIN_PASSWORD no arquivo .env}
-      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env}
-      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-480}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES}
     depends_on:
-      database:
+      db:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q '\"status\":\"UP\"'"]

@@ -26,8 +26,8 @@
   <section class="numbers-section" id="numeros"><div class="shell narrow">
       <span class="section-kicker">FAÇA SUA ESCOLHA</span><h2>Escolha seus
         números da sorte</h2>
-      <p class="section-copy">Cada número vale um pacote de fraldas ou Pix de {{
-        money(raffle()?.numberPrice) }}. Você pode escolher quantos quiser.</p>
+      <p class="section-copy">Cada número está no valor de {{
+        money(raffle()?.numberPrice) }} no Pix. Você pode escolher quantos quiser.</p>
       <div class="legend"><span><i class="available"></i>
           Disponível</span><span><i class="chosen"></i>
           Selecionado</span><span><i class="busy"></i> Reservado</span></div>
@@ -67,13 +67,13 @@
           <label class="payment"
             [class.active]="form.paymentMethod === 'PIX'"><input type="radio"
               name="payment" value="PIX"
-              [(ngModel)]="form.paymentMethod"><span><strong>Pix</strong><small>Pagamento
+              [(ngModel)]="form.paymentMethod"><span><strong>Pix ou Dinheiro</strong><small>Pagamento
                 por número</small></span></label>
-          <label class="payment"
+          <!-- <label class="payment"
             [class.active]="form.paymentMethod === 'DIAPER'"><input type="radio"
               name="payment" value="DIAPER"
               [(ngModel)]="form.paymentMethod"><span><strong>Fralda</strong><small>Um
-                pacote por número</small></span></label>
+                pacote por número</small></span></label> -->
           <label class="payment"
             [class.active]="form.paymentMethod === 'CARD'"><input type="radio"
               name="payment" value="CARD"
@@ -109,5 +109,5 @@
             participação.</p></article><article><b>3</b><h3>Confirme</h3><p>Finalize
             pelo WhatsApp e boa sorte!</p></article></div></div></section>
   <footer><div class="shell"><span>Feito com carinho para o José Lucca
-        ♡</span><small>Chá Rifa · 2026</small></div></footer>
+        ♡</span><small>Chá Rifa · 2026 - Desenvolvido por Hilberto Gouveia(Pai)</small></div></footer>
 </main>

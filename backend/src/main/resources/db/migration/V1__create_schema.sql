@@ -24,7 +24,7 @@ create table reservations (
 create table raffle_numbers (
     id uuid primary key,
     raffle_id uuid not null references raffles(id) on delete cascade,
-    number integer not null check (number between 1 and 100),
+    number integer not null check (number between 1 and 150),
     status varchar(20) not null check (status in ('AVAILABLE', 'RESERVED', 'CONFIRMED')),
     reservation_id uuid references reservations(id),
     constraint uk_raffle_number unique (raffle_id, number)

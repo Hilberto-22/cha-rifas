@@ -120,7 +120,7 @@ export class RafflePage implements OnInit, OnDestroy {
     const payment = { PIX: 'Pix', DIAPER: 'pacote de fraldas', CARD: 'cartão' }[
       this.form.paymentMethod
     ];
-    const message = `Olá! Sou ${this.form.name}. Reservei os números ${reservation.numbers.join(', ')} na ${raffle.title}. Escolhi pagar com ${payment}. Código da reserva: ${reservation.id.slice(0, 8)}.`;
+    const message = `Olá! Sou ${this.form.name}. Reservei os números ${reservation.numbers.join(', ')} no ${raffle.title}. Escolhi pagar com ${payment}. Código da reserva: ${reservation.id.slice(0, 8)}.`;
     window.location.href = `https://wa.me/${raffle.whatsappNumber}?text=${encodeURIComponent(message)}`;
   }
   money(value: number | undefined): string {
